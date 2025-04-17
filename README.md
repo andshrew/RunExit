@@ -29,13 +29,16 @@ This version of the application will keep trying to exit Windows for ~10 seconds
 * **ShellExecute error codes are now displayed**  
 If ShellExecute fails to run the application, then a message box is displayed along with the error code. A list of error codes are [here](#error-codes).
 
+* **Application startup behavior can be changed**  
+The default application startup `SW_SHOWNORMAL` can be overridden to a different value by passing a `/show=[number]` parameter to `RUNEXIT.EXE`, before the application path. This allows starting the application minimized, maximized, or in the "background" (not activated). A list of valid values are [here](#valid-ncmdshow-values).
+
 # Usage
 
 Download `RUNEXIT.EXE` from the releases page and copy it to your system; these examples will assume that you save it to `C:\RUNEXIT\RUNEXIT.EXE` and that `win` is in your `PATH`.
 
 ## Basic Usage
 
-`win C:\runexit\runexit.exe [path to application] [optional application parameters]`
+`win C:\runexit\runexit.exe [optional runexit parameters] [path to application] [optional application parameters]`
 
 ## Example 1
 Run application `C:\MPS\GPM\GPM.EXE` with no additional parameters.
@@ -48,6 +51,11 @@ Run application `C:\GAMES\MYGAME\GAME.EXE` with parameter `/cheatmode`
 `win C:\runexit\runexit.exe c:\games\mygame\game.exe /cheatmode`
 
 ## Example 3
+Run application `C:\WEP\JEZZBALL.EXE` in a maximized window.
+
+`win C:\runexit\runexit.exe /show=3 c:\wep\jezzball.exe`
+
+## Example 4
 DOSBox AUTOEXEC to run application `C:\MPS\GPM\GPM.EXE` with no additional parameters.  
 On running DOSBox this would load Windows and run the application. Once the application is closed Windows will then exit, and DOSBox will close.
 
@@ -72,18 +80,36 @@ Build from the command line `C:\delphi\bin\dcc.exe c:\runexit\runexit.dpr`
 
 ## Windows API ShellExecute
 
-`ShellExecute (0, nil, @fileName [1], @params [1], @pathName [1], SW_SHOWNORMAL);`
+`ShellExecute (0, nil, @fileName [1], @params [1], @pathName [1], nCmdShow);`
 
-| Parameter     | Description                                                                 |
-|---------------|-----------------------------------------------------------------------------|
-| `0`             | Handle to the parent window. `0` for no parent                              |
-| `nil`           | The operation to perform<br/>A `null` value will use the default of `open`. |
-| `fileName`      | Application name eg. `GPM.EXE`                                              |
-| `params`        | Application parameters eg. `/cheatmode`                                     |
-| `pathName`      | Application path eg. `C:\MPS\GPM`                                           |
-| `SW_SHOWNORMAL` | State the application window is set to to                               |
+| Parameter  | Description                                                                 |
+|------------|-----------------------------------------------------------------------------|
+| `0`        | Handle to the parent window. `0` for no parent                              |
+| `nil`      | The operation to perform<br/>A `null` value will use the default of `open`. |
+| `fileName` | Application name eg. `GPM.EXE`                                              |
+| `params`   | Application parameters eg. `/cheatmode`                                     |
+| `pathName` | Application path eg. `C:\MPS\GPM`                                           |
+| `nCmdShow` | State the application window is set to on launch                            |
 
-### Error Codes
+## Valid `nCmdShow` values
+| Value | Name                                 | Meaning                                                                                                                                                                                                                               |
+|:-----:|--------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 0     | `SW_HIDE`                            | Hides the window and activates another window.                                                                                                                                                                                        |
+| 1     | `SW_SHOWNORMAL`<br/>`SW_NORMAL`      | Activates and displays a window. If the window is minimized, maximized, or arranged, the system restores it to its original size and position. An application should specify this flag when displaying the window for the first time. |
+| 2     | `SW_SHOWMINIMIZED`                   | Activates the window and displays it as a minimized window.                                                                                                                                                                           |
+| 3     | `SW_SHOWMAXIMIZED`<br/>`SW_MAXIMIZE` | Activates the window and displays it as a maximized window.                                                                                                                                                                           |
+| 4     | `SW_SHOWNOACTIVATE`                  | Displays a window in its most recent size and position. This value is similar to `SW_SHOWNORMAL`, except that the window is not activated.                                                                                            |
+| 5     | `SW_SHOW`                            | Activates the window and displays it in its current size and position.                                                                                                                                                                |
+| 6     | `SW_MINIMIZE`                        | Minimizes the specified window and activates the next top-level window in the Z order.                                                                                                                                                |
+| 7     | `SW_SHOWMINNOACTIVE`                 | Displays the window as a minimized window. This value is similar to `SW_SHOWMINIMIZED`, except the window is not activated.                                                                                                           |
+| 8     | `SW_SHOWNA`                          | Displays the window in its current size and position. This value is similar to `SW_SHOW`, except that the window is not activated.                                                                                                    |
+| 9     | `SW_RESTORE`                         | Activates and displays the window. If the window is minimized, maximized, or arranged, the system restores it to its original size and position. An application should specify this flag when restoring a minimized window.           |
+| 10    | `SW_SHOWDEFAULT`                     | Sets the show state based on the `SW_` value specified in the `STARTUPINFO` structure passed to the `CreateProcess` function by the program that started the application.                                                             |
+| 11    | `SW_FORCEMINIMIZE`                   | Minimizes a window, even if the thread that owns the window is not responding. This flag should only be used when minimizing windows from a different thread.                                                                         |
+
+_Taken from [Microsoft documentation for `ShowWindow()` in the Windows API](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-showwindow#parameters)_
+
+## Error Codes
 
 | Value | Meaning                                                                                                                             |
 |:-----:|-------------------------------------------------------------------------------------------------------------------------------------|
