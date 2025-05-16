@@ -13,10 +13,12 @@ var
   params: String;
   errorMsg: String;
   i, num, pathIdx, nCmdShow: Integer;
+  delaySeconds: Integer;
 
 begin
   { Set defaults }
   nCmdShow := SW_SHOWNORMAL;
+  delaySeconds := 0;
 
   { Look for slash-options before the path param and handle them }
   pathIdx := 1;
@@ -28,14 +30,28 @@ begin
     reParam := UpperCase(Copy(ParamStr(pathIdx), 2, i - 2));
     reValue := Copy(ParamStr(pathIdx), i + 1, Length(ParamStr(pathIdx)) - i);
 
-    { Test each option type and extract its value - only one for now }
+    { Test each option type and extract its value }
     if (reParam = 'SHOW') then
     begin
       num := StrToIntDef(reValue, -1);
       if ((num >= 0) and (num <= 11)) then nCmdShow := num;
+    end
+    else if (reParam = 'DELAY') then
+    begin
+      delaySeconds := StrToIntDef(reValue, 0);
     end;
 
     Inc(pathIdx);
+  end;
+
+  { Add delay if requested }
+  if delaySeconds > 0 then
+  begin
+    { Calculate the end time }
+    h := GetTickCount + (delaySeconds * 1000);
+    repeat
+      Application.ProcessMessages;
+    until GetTickCount >= h;
   end;
 
   { Split first parameter into path and filename }
