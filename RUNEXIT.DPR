@@ -14,6 +14,7 @@ var
   errorMsg: String;
   i, num, pathIdx, nCmdShow: Integer;
   delaySeconds: Integer;
+  ticks: LongInt;
 
 begin
   { Set defaults }
@@ -48,10 +49,10 @@ begin
   if delaySeconds > 0 then
   begin
     { Calculate the end time }
-    h := GetTickCount + (delaySeconds * 1000);
+    ticks := GetTickCount + (delaySeconds * 1000);
     repeat
       Application.ProcessMessages;
-    until GetTickCount >= h;
+    until GetTickCount >= ticks;
   end;
 
   { Split first parameter into path and filename }
@@ -102,13 +103,11 @@ begin
     { And shut down Windows }
     { But sometimes Windows does not successfully exit first try... }
     { This repeats the request for ~10 seconds before giving up }
-    h := GetTickCount;
+    ticks := GetTickCount + 10000;
     repeat
       Application.ProcessMessages;
       ExitWindows (0, 0);
-    until GetTickCount > h + 10000;
+    until GetTickCount > ticks;
     MessageBox(0, 'Unable to Exit Windows', 'RunExit Error', MB_OK);
-    { Try one final time... }
-    ExitWindows (0, 0);
   end;
 end.
