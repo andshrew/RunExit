@@ -32,6 +32,10 @@ If ShellExecute fails to run the application, then a message box is displayed al
 * **Application startup behavior can be changed**  
 The default application startup `SW_SHOWNORMAL` can be overridden to a different value by passing a `/show=[number]` parameter to `RUNEXIT.EXE`, before the application path. This allows starting the application minimized, maximized, or in the "background" (not activated). A list of valid values are [here](#valid-ncmdshow-values).
 
+* **Optional delay before launching the application**  
+A delay (in seconds) can be specified before launching the application by passing a `/delay=[seconds]` parameter to `RUNEXIT.EXE`, before the application path. This is useful if you need to ensure Windows and its drivers are fully initialized before starting the application.  
+Example: `/delay=5` will wait 5 seconds before launching the application.
+
 # Usage
 
 Download `RUNEXIT.EXE` from the releases page and copy it to your system; these examples will assume that you save it to `C:\RUNEXIT\RUNEXIT.EXE` and that `win` is in your `PATH`.
@@ -56,6 +60,11 @@ Run application `C:\WEP\JEZZBALL.EXE` in a maximized window.
 `win C:\runexit\runexit.exe /show=3 c:\wep\jezzball.exe`
 
 ## Example 4
+Run application `C:\CASTLE\CASTLE.EXE` with a 5 second delay before launch.
+
+`win C:\runexit\runexit.exe /delay=5 c:\castle\castle.exe`
+
+## Example 5
 DOSBox AUTOEXEC to run application `C:\MPS\GPM\GPM.EXE` with no additional parameters.  
 On running DOSBox this would load Windows and run the application. Once the application is closed Windows will then exit, and DOSBox will close.
 
