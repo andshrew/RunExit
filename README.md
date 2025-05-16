@@ -33,7 +33,7 @@ If ShellExecute fails to run the application, then a message box is displayed al
 The default application startup `SW_SHOWNORMAL` can be overridden to a different value by passing a `/show=[number]` parameter to `RUNEXIT.EXE`, before the application path. This allows starting the application minimized, maximized, or in the "background" (not activated). A list of valid values are [here](#valid-ncmdshow-values).
 
 * **Optional delay before launching the application**  
-A delay (in seconds) can be specified before launching the application by passing a `/delay=[seconds]` parameter to `RUNEXIT.EXE`, before the application path. This is useful if you need to ensure Windows and its drivers are fully initialized before starting the application.  
+A delay (in seconds) can be specified before launching the application by passing a `/delay=[seconds]` parameter to `RUNEXIT.EXE`, before the application path. This is useful if you need to ensure Windows and its drivers are fully initialized before starting the application. The delay can be a maximum of 30 seconds.  
 Example: `/delay=5` will wait 5 seconds before launching the application.
 
 # Usage

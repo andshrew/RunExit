@@ -39,7 +39,8 @@ begin
     end
     else if (reParam = 'DELAY') then
     begin
-      delaySeconds := StrToIntDef(reValue, 0);
+      num := StrToIntDef(reValue, 0);
+      if ((num >= 0) and (num <= 30)) then delaySeconds := num;
     end;
 
     Inc(pathIdx);
