@@ -20,7 +20,8 @@ This [tag](https://github.com/andshrew/RunExit/releases/tag/v1.1) contains [the 
 When parsing the application path to determine what the working directory should be set to, the original version would include the trailing `\` within the path and pass that through to ShellExecute.  
 eg. `C:\MPS\GPM\GPM.EXE` would set the working directory as `C:\MPS\GPM\`  
 This version sets the working directory without the trailing `\`:  
-`C:\MPS\GPM\GPM.EXE` now sets the working directory as `C:\MPS\GPM`  
+`C:\MPS\GPM\GPM.EXE` now sets the working directory as `C:\MPS\GPM`
+You can override the path of the working directory if the application needs to run in a different directory than the executable by passing a `/pwd=[path]` parameter to `RUNEXIT.EXE`, before the application path.
 
 * **Exit Windows will keep retrying for ~10 seconds**  
 Depending on the application being launched, sometimes the exit from Windows after the application had finished would intermittently (but consistently) fail.  
@@ -65,6 +66,11 @@ Run application `C:\CASTLE\CASTLE.EXE` with a 5 second delay before launch.
 `win C:\runexit\runexit.exe /delay=5 c:\castle\castle.exe`
 
 ## Example 5
+Run application `D:\WIN31\RBJR.EXE` with the working directory as `D:\RESOURCE`.
+
+`win C:\runexit\runexit.exe /pwd=D:\resource D:\win31\rbjr.EXE`
+
+## Example 6
 DOSBox AUTOEXEC to run application `C:\MPS\GPM\GPM.EXE` with no additional parameters.  
 On running DOSBox this would load Windows and run the application. Once the application is closed Windows will then exit, and DOSBox will close.
 

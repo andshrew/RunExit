@@ -41,6 +41,14 @@ begin
     begin
       num := StrToIntDef(reValue, 0);
       if ((num >= 0) and (num <= 30)) then delaySeconds := num;
+    end
+    else if (reParam = 'PWD') then
+    begin
+      pathName := reValue;
+      { Ensure path doesn't end with a backslash }
+      { Unless we're at the root ie. C:\ }
+      if (Length(pathName) > 3) and (pathName[Length(pathName)] = '\') then
+        Delete(pathName, Length(pathName), 1);
     end;
 
     Inc(pathIdx);
@@ -57,11 +65,11 @@ begin
   end;
 
   { Split first parameter into path and filename }
-  i := Pos ('\', ParamStr (PathIdx));
-  if (i > 0) then
+  i := Pos ('\', ParamStr (pathIdx));
+  if (i > 0) and (pathName = '') then
   begin
     { Make it a path, find last occurrence of directory separator }
-    pathName := ParamStr (PathIdx);
+    pathName := ParamStr (pathIdx);
     i := (StrRScan (@pathName [1], '\') - @pathName [1]) + 1;
     fileName := Copy (pathName, i + 1, Length (pathName) - i);
     { Remove the trailing directory separator from path }
@@ -69,7 +77,7 @@ begin
     if pathName [i - 1] <> ':' then begin i := i - 1 end;
     pathName := Copy (pathName, 1, i);
   end else begin
-    fileName := ParamStr (PathIdx);
+    fileName := ParamStr (pathIdx);
   end;
 
   { Concatenate any remaining parameters }
