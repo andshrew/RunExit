@@ -15,11 +15,26 @@ var
   i, num, pathIdx, nCmdShow: Integer;
   delaySeconds: Integer;
   ticks: LongInt;
+  logEnabled: Boolean;
+  logPath: String;
+  logFile: Text;
+  version: String;
+
+procedure WriteLog(const msg: string);
+begin
+  if logEnabled then
+    Append(logFile);
+    Writeln(logFile, msg);
+    CloseFile(logFile);
+end;
 
 begin
   { Set defaults }
   nCmdShow := SW_SHOWNORMAL;
   delaySeconds := 0;
+  version := '{{GIT_TAG_NAME}}/{{GIT_COMMIT_REF}}';
+  logPath := '\runexit.log';
+  logEnabled := False;
 
   { Look for slash-options before the path param and handle them }
   pathIdx := 1;
@@ -49,7 +64,27 @@ begin
       { Unless we're at the root ie. C:\ }
       if (Length(pathName) > 3) and (pathName[Length(pathName)] = '\') then
         Delete(pathName, Length(pathName), 1);
+    end
+    else if (reParam = 'LOG') then
+    begin
+      Assign(logFile, logPath);
+      Rewrite(logFile);
+      if IOResult = 0 then
+      begin
+        logEnabled := True;
+        CloseFile(logFile);
+        WriteLog(Format('RunExit version: %s', [version]));
+        WriteLog('https://github.com/andshrew/RunExit');
+        if pathIdx <> 1 then
+          WriteLog('/log should be the first parameter if you want to capture all output');
+        WriteLog('Command line parameters:')
+      end else begin
+        errorMsg := Format(
+          'Unable to create log file:' + #13#10 + '%s', [logPath]);
+        MessageBox(0, @errorMsg [1], 'Log Error', MB_OK);
+      end;
     end;
+    WriteLog(Format('   Parameter %d: %s Value: %s', [pathIdx, reParam, reValue]));
 
     Inc(pathIdx);
   end;
@@ -59,6 +94,7 @@ begin
   begin
     { Calculate the end time }
     ticks := GetTickCount + (delaySeconds * 1000);
+    WriteLog(Format('Application start delayed by %d second(s)', [delaySeconds]));
     repeat
       Application.ProcessMessages;
     until GetTickCount >= ticks;
@@ -79,14 +115,18 @@ begin
   end else begin
     fileName := ParamStr (pathIdx);
   end;
+  WriteLog(Format('Application executable: %s', [fileName]));
+  WriteLog(Format('Application path: %s', [pathName]));
 
   { Concatenate any remaining parameters }
+  WriteLog('Application parameters:');
   Inc(pathIdx);
   num := ParamCount;
   for i := pathIdx to num do
   begin
     if (i > pathIdx) then params := params + ' ';
     params := params + ParamStr (i);
+    WriteLog(Format('   %s', [ParamStr(i)]));
   end;
 
   { Add trailing NUL bytes }
@@ -106,9 +146,11 @@ begin
   if (h > 32) then
   begin
     { Wait for it to complete }
+    WriteLog('Application has started');
     repeat
       Application.ProcessMessages;
     until GetModuleUsage (h) = 0;
+    WriteLog('Application has ended');
     { And shut down Windows }
     { But sometimes Windows does not successfully exit first try... }
     { This repeats the request for ~10 seconds before giving up }
@@ -117,6 +159,7 @@ begin
       Application.ProcessMessages;
       ExitWindows (0, 0);
     until GetTickCount > ticks;
+    WriteLog('Unable to exit Windows within time limit');
     MessageBox(0, 'Unable to Exit Windows', 'RunExit Error', MB_OK);
   end;
 end.
