@@ -2,9 +2,9 @@
 
 ## Thanks to everyone who has contributed to this project
 
-* [@lexarvn](https://github.com/lexarvn) - [v1.4](https://github.com/andshrew/RunExit/releases/tag/v1.4)
+* [@lexarvn](https://github.com/lexarvn) - [v1.4](https://github.com/andshrew/RunExit/releases/tag/v1.4), [v1.5](https://github.com/andshrew/RunExit/releases/tag/v1.5)
 * [@greg-kennedy](https://github.com/greg-kennedy) - [v1.3](https://github.com/andshrew/RunExit/releases/tag/v1.3)
-* [@andshrew](https://github.com/andshrew) - [v1.2](https://github.com/andshrew/RunExit/releases/tag/v1.2), [v1.4](https://github.com/andshrew/RunExit/releases/tag/v1.4)
+* [@andshrew](https://github.com/andshrew) - [v1.2](https://github.com/andshrew/RunExit/releases/tag/v1.2), [v1.4](https://github.com/andshrew/RunExit/releases/tag/v1.4), [v2.0](https://github.com/andshrew/RunExit/releases/tag/v2.0)
 
 ## Special thanks to [Steven Henk Don](https://www.shdon.com/about)
 
